@@ -8,6 +8,7 @@ const createOrder = async function (req, res) {
     try {
         
         req.body.userId = req.params.userId
+        const keysArray = Object.keys(req.body)
         
         const {items, totalPrice,  totalItems, cancellable, totalQuantity} = req.body
         if(!validator.isValidBody(req.body)){
@@ -28,12 +29,12 @@ const createOrder = async function (req, res) {
         if(!(/^[1-9]{1}[0-9]{0,15}$/.test(totalQuantity) && validator.isValid(totalQuantity))){ 
             return res.status(400).send({status:false, message:"Bad request please provoide valid totalQuantity"})    
         }
-        if(cancellable){
+        if(keysArray.includes("cancellable")){
             if(!validator.isValid(cancellable)){
-                return res.status(400).send({status:false, message:"please provide valid input in cancllable it only accept Boolean values"})
+                return res.status(400).send({status:false, message:"invalid cancelable please provide valid input in cancllable it only accept Boolean values"})
             }
 
-            if(!["true", "false"].includes(cancellable)){
+            if(!(cancellable == false || cancellable == true)){
                 return res.status(400).send({status:false, message:"please provide valid input in cancllable it only accept Boolean values"})
         
             }
@@ -57,6 +58,11 @@ const updateOrder = async function (req, res) {
     try {
         let userId = req.params.userId
         let { orderId , status} = req.body
+
+        const keysArray = Object.keys(req.body)
+        if(keysArray.includes("cancellable")){
+            return res.status(403).send({status:false, message:"you don't have authority to change cancellable value"})
+        }
 
         
         if(!validator.isValidBody(req.body)){
