@@ -135,9 +135,14 @@ const updateProduct = async function(req,res){
         console.log(availableSizes)
           
         if(bodyArray.includes("availableSizes")){
+
+
+
             if(!validator.isValid(req.body.availableSizes)){
                 return res.status(400).send({status:false, message:"Bad request please provoide valid availableSizes"})
             }
+
+
             availableSizes = JSON.parse(req.body.availableSizes)
             
             const isSize = validator.isValidSize(availableSizes)
@@ -248,16 +253,7 @@ const getProduct = async function (req, res) {
         }
         //price =priceGreaterThan ,priceLessThan
         console.log(title,availableSizes,names,size,priceGreaterThan,priceLessThan )
-        //  if(price){
-        //     if (!validator.isValid(price)) {
-        //         return res.status(400).send({ status: false, msg: "price should not be empty" })
-        //     }
-        //     if (!validator.isValidPrice(price)) {
-        //         return res.status(400).send({ status: false, msg: "please entre valid price" })
-        //     }
-
-        //  }
-
+        
          if(availableSizes){
 
             if (!validator.isValid(availableSizes)) {
@@ -336,21 +332,7 @@ const getProduct = async function (req, res) {
 
 
 
-    //     if(!priceLessThan && priceGreaterThan){
-    
-        
-    //         if(validator.isValid(priceGreaterThan)){
-    //             filterquery.price={$gt:priceGreaterThan}
-    //             Object.assign(filterquery, {price: { $regex: title, $options: "i" }});
-     
-    //         }
-    
-
-
-    //     if(validator.isValid(priceLessThan)){
-    //       filterquery.price= {$lt:priceLessThan}
-    //   }
-
+   
          }
   
         
@@ -367,7 +349,7 @@ const getProduct = async function (req, res) {
         }
        // if (validator.isValid(title)) {
             
-            title = { $regex: title, $options: "i" }
+            title = { $regex: title, $options: "i" } 
             filterquery.title = title
             // filterquery= {
             //     ...filterquery, ...title
@@ -407,17 +389,6 @@ const getProduct = async function (req, res) {
 module.exports.getProduct = getProduct
 
 
-
-
-
-
-
-
-
-// const productModel = require('../models/productModel')
-// const validator = require('../validator/validation')
-// const aws = require('../aws/aws')
-//const aws = require("aws-sdk");
 
 
 

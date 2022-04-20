@@ -58,14 +58,7 @@ const updateOrder = async function (req, res) {
         let userId = req.params.userId
         let { orderId , status} = req.body
 
-        // if (!validator.isValidobjectId(userId)) {
-        //     return res.status(400).send({ status: false, msg: "invalid userId" })
-        // }
-        // const userExist = await userModel.findById({ _id: userId })
-        // if (!userExist) {
-        //     return res.status(404).send({ status: false, msg: "user not found" })
-        // }
-
+        
         if(!validator.isValidBody(req.body)){
             return res.status(400).send({status:false, message:"Bad Request request body is empty"})
         }
@@ -125,16 +118,6 @@ const updateOrder = async function (req, res) {
 
 
 module.exports.updateOrder = updateOrder
-
-
-
-
-
-
-
-
-
-
 module.exports.createOrder = createOrder
 
 

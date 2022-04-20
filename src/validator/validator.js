@@ -82,6 +82,7 @@ const isValidSize =  function (size){
            wrongSizes.push(size[i])
         }
     }
+
     if(wrongSizes.length){
         return wrongSizes
     } else {
