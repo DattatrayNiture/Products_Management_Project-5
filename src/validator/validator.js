@@ -2,15 +2,18 @@ const mongoose = require("mongoose")
 
 const isValid = function (value) {
     if (typeof value === 'undefined' || value === null) return false
-    if (typeof value === 'string' && value.trim().length === 0) return false 
+    if (typeof value === 'string' && value.trim().length === 0) return false  
    // if (typeof value === 'number' && value.toString().trim().length === 0) return false
     return true;
 }
 //  && typeof value === ['string']
 
+
 const isValidBody = function (requestBody) {
     return Object.keys(requestBody).length > 0;
 }
+
+
 
 const isValidCurrencyId = function (currencyId) {
     return ['INR'].indexOf(currencyId) !== -1
@@ -37,7 +40,7 @@ const isValidPassword = function(value) {
     return true
 }
 
-const isValidPrice = function(value){
+const isValidPrice = function(value){  
     if(!(/^\d{0,8}(\.\d{1,4})?$/.test(value))){
         return false
     }
@@ -49,7 +52,7 @@ const isValidobjectId = (objectId) => {
 }
 
 const isValidPinCode = function(value){
-    if(!(/^[1-9][0-9]{5}$/.test(value.trim()))){
+    if(!(/^[1-9]{1}[0-9]{5}$/.test(value.trim()))){
         return false
     }
     return true
@@ -58,12 +61,6 @@ const isValidPinCode = function(value){
 
 
 
-const isValidDate = (date) => {
-    //instead we can use date regex
-    const specificDate = new Date(date).setHours(0, 0, 0, 0);
-    const today = new Date().setHours(0, 0, 0, 0);
-    return specificDate < today;
-}
 
 const isValidCurrencyFormat = function (currencyFormat) {
     return ['₹'].indexOf(currencyFormat) !== -1
@@ -96,19 +93,8 @@ const isValidSize =  function (size){
 
 
 
-module.exports= {isValid,isValidBody,isValidCurrencyId,isValidPhone,isValidEmail,
-                isValidPassword,isValidobjectId,isValidDate,isValidPinCode,isValidPrice,
-                isValidCurrencyFormat,isValidSize}
+module.exports= { isValid,isValidBody,isValidCurrencyId,isValidPhone,isValidEmail,
+                isValidPassword,isValidobjectId,isValidPinCode,isValidPrice,
+                isValidCurrencyFormat,isValidSize }
 
-              
-// module.exports.isValidBody = isValidBody
-// module.exports.isValidCurrencyId = isValidCurrencyId
-// module.exports.isValidPhone = isValidPhone
-// module.exports.isValidEmail = isValidEmail
-// module.exports.isValidPassword = isValidPassword
-// module.exports.isValidobjectId = isValidobjectId
-// module.exports.isValidDate = isValidDate
-// module.exports.isValidPinCode = isValidPinCode
-// module.exports.isValidPrice = isValidPrice
-// module.exports.isValidCurrencyFormat = isValidCurrencyFormat
-// module.exports.isValidSize = isValidSize
+ 

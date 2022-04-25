@@ -3,32 +3,20 @@ const userModel = require("../models/userModel")
 const productModel = require("../models/productModel")
 const validator = require("../validator/validator")
 
-
+console.log(validator)
 
 const createCart = async (req, res) => {
     try{
 
     const userId = req.params.userId
+    
 
     const requestBody = req.body
     if(!validator.isValidBody(requestBody)){
         return res.status(400).send({status:false, message:"Bad Request request body is empty"})
     }
-    const {productId, quantity, } = requestBody
+    const { productId, quantity } = requestBody
 
-    // if(!validator.isValid(price)){
-    //     return res.status(400).send({status:false, message:"Bad Request price is invalid or empty"})
-    // }
-    // if(!validator.isValidPrice(price)){
-    //     return res.status(400).send({status:false, message:"Bad Request price is invalid it only accepts number & digits"})
-    // }
-    // const isItemPresent = items.filter((elem) =>{
-    //     return elem.trim()
-    // })
-    // if(!(validator.isValidBody(items) && validator.isValidBody(isItemPresent))){
-    //     return res.status(400).send({status:false, message:"Bad Request request there no product in cart"})
-
-    // } 
      
     
          if (!productId) {
@@ -54,11 +42,6 @@ const createCart = async (req, res) => {
               .send({ status: false, message: `product with this id : ${productId} not found`});
           }
 
-          
-
-          
-
-
           if (quantity){
 
             if(!validator.isValid(quantity)){
@@ -66,15 +49,15 @@ const createCart = async (req, res) => {
               status: false,
               msg: `quantity is must please provide`,
             });
-            }
-
+            }   
+             
             if(!/^[1-9]{1}[0-9]{0,15}$/.test(quantity)){
                 return res.status(400).send({status:false, message:"Bad request please provoide valid quantity with minimum 1 number"})
             }
             
 
-          }
-          console.log(Number(productPresent.installments), ( Number(quantity) || 1))
+          }  
+         // console.log(Number(productPresent.installments), ( Number(quantity) || 1))
           if(!(Number(productPresent.installments) >= ( Number(quantity) || 1))){
                 return res.status(400).send({status:false, message:`stock is less than required quantity Available Stock : ${productPresent.installments}`})
         }
@@ -84,42 +67,38 @@ const createCart = async (req, res) => {
 
 
          const cartExists = await cartModel.findOne({userId:userId})
-        console.log(cartExists)
+        //console.log(cartExists)
+
          if(cartExists){
 
             let itemsExists = cartExists.items
             let count = 0;
             for(let i=0; i<itemsExists.length; i++){
-                console.log("in")
+               
                 if(productId == itemsExists[i].productId){
-                    console.log(typeof productId, typeof itemsExists[i].productId)
-                    console.log("if")
+                   
                     itemsExists[i].quantity = Number(itemsExists[i].quantity) + (Number(quantity) || 1)
-                    let totalCurrentProductPrice = Number( productPresent.price )* (Number(quantity) || 1)
+                    let totalCurrentProductPrice = Number( productPresent.price ) * (Number(quantity) || 1)
                     cartExists.totalPrice = Number(cartExists.totalPrice) + Number(totalCurrentProductPrice)
-                    console.log("before")
-                     console.log(cartExists)
+                    
 
                     const updatedCart = await cartModel.findOneAndUpdate({userId:userId}, cartExists, {new:true})
-                    console.log("after")
-                    console.log(updatedCart)
-
-                    console.log(cartExists)
-
+                   
                     count++
                     return res.status(200).send({status:true, message:"updation DONE! ",data:updatedCart})
                    
                    
                 }
             }
-            if(count === 0){
+            if(count === 0){ 
+              
                 let productObj = {productId:productId, quantity:quantity}
                 let totalCurrentProductPrice =  Number( productPresent.price )* (Number(quantity) || 1)
                 cartExists.totalPrice = Number(cartExists.totalPrice) + Number(totalCurrentProductPrice)
                 cartExists.totalItems= Number(cartExists.totalItems) + 1
                 itemsExists.push(productObj)
                 const updatedCart = await cartModel.findOneAndUpdate({userId:userId}, cartExists, {new:true})
-                return res.status(200).send({status:true, message:"updation DONE! ",data:updatedCart/*,productInsta:productInsta*/})
+                return res.status(200).send({status:true, message:"updation DONE! ",data:updatedCart})
                     
 
                 
@@ -131,10 +110,7 @@ const createCart = async (req, res) => {
 
 
          const cartDocument = {}
-        //  const itemsObj = {
-        //      productId:productId,
-        //      quantity:quantity
-        //  }
+       
          let items = [{
              'productId':productId,
              'quantity':quantity
@@ -182,7 +158,7 @@ const updateCart = async (req, res) => {
           .status(400)
           .send({ status: false, message: `this productId ${productId} Invalid` });
       }
-      if(!validator.isValid(removeProduct) || !["0", "1"].includes(removeProduct)){
+      if(!validator.isValid(removeProduct) || ![0, 1].includes(removeProduct)){
 
         return res.status(400).send({status:false , message:"removeProduct must required & it only contain 0 , 1 "})
 
@@ -207,7 +183,7 @@ const updateCart = async (req, res) => {
     if (!cartId) {
         return res.status(400).send({
           status: false,
-          msg: `cartId is must please provide cartId`,
+          msg: `cartId is must, please provide cartId`,
         });
       }
       if (!validator.isValidobjectId(cartId)) {
@@ -231,37 +207,28 @@ const updateCart = async (req, res) => {
     
 
       for(let i=0; i< items.length; i++){
-        console.log("for")
-
+      
         if(items[i].productId == productId){
           if( Number(removeProduct) == 1){
-            console.log("if")
-           cartPresent.items[i].quantity = Number(cartPresent.items[i].quantity) -1
-           console.log(items[i].quantity, cartPresent.items[i],items[i])
+           
+           cartPresent.items[i].quantity = Number(cartPresent.items[i].quantity) - 1
+          // console.log(items[i].quantity, cartPresent.items[i],items[i])
            cartPresent.totalPrice = Number(cartPresent.totalPrice) - Number(productPresent.price)  
 
            if(Number(items[i].quantity) == 0 ){
 
-            items.splice(i,1)
-            cartPresent.totalItems = Number(cartPresent.totalItems) -1
+            items.splice(i,1)  
+            cartPresent.totalItems = Number(cartPresent.totalItems) - 1
             
            }
           }
           if(Number(removeProduct) == 0){
 
-            //cartPresent.items[i].quantity = Number(cartPresent.items[i].quantity) -1
-           // console.log(items[i].quantity, cartPresent.items[i],items[i])
+           
             cartPresent.totalPrice = Number(cartPresent.totalPrice) - (Number(productPresent.price) *  Number(cartPresent.items[i].quantity))
- 
-            
- 
              items.splice(i,1)
-             cartPresent.totalItems = Number(cartPresent.totalItems) -1
+             cartPresent.totalItems = Number(cartPresent.totalItems) - 1
              
-            
-
-
-
 
           }
 
@@ -335,27 +302,23 @@ const deleteCart = async function (req, res) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports.deleteCart = deleteCart
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module.exports.updateCart = updateCart
 module.exports.createCart = createCart
 module.exports.getCartById = getCartById

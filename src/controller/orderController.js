@@ -34,8 +34,9 @@ const createOrder = async function (req, res) {
                 return res.status(400).send({status:false, message:"invalid cancelable please provide valid input in cancllable it only accept Boolean values"})
             }
 
+           // console.log(cancellable, typeof(cancellable))
             if(!(cancellable == false || cancellable == true)){
-                return res.status(400).send({status:false, message:"please provide valid input in cancllable it only accept Boolean values"})
+                return res.status(400).send({status:false, message:"please provide valid input in cancllable ,it only accept Boolean values"})
         
             }
 
@@ -80,7 +81,10 @@ const updateOrder = async function (req, res) {
         }
 
       
-        console.log(orderExist, orderExist.status)
+        //console.log(orderExist, orderExist.status)
+        if(!["pending", "completed", "cancled"].includes(status)){
+            return res.status(400).send({status:"false", message:"status is invalid you can only completed or cancle order"})
+        }
 
         if(orderExist.status == "completed"){
             return res.status(400).send({status:false, message:"this order is already completed you can not change the status"})
@@ -89,15 +93,11 @@ const updateOrder = async function (req, res) {
             return res.status(400).send({status:false, message:"this order is already cancled you can not change the status"})
         }
         
-        if(!["pending", "completed", "cancled"].includes(status)){
-            return res.status(400).send({status:"false", message:"status is invalid you can only completed or cancle order"})
-        }
+    
         if (orderExist.cancellable != true && status == "cancled") {
             return res.status(400).send({ status: false, msg: "order can not be cancel" })
         }
-        // if (userId != orderExist.userId) {
-        //     return res.status(400).send({ status: false, msg: "credentials are not matching" })
-        // }
+        
         const updatedOrder = await orderModel.findOneAndUpdate({ _id: orderId, isDeleted: false },
              { status: status }, { new: true })
        

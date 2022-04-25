@@ -2,45 +2,46 @@ const userModel = require("../models/userModel");
 const validator = require("../validator/validator");
 const jwt = require("jsonwebtoken");
 const validatEmail = require("validator")
-const aws = require("aws-sdk");
+//const aws = require("aws-sdk");
 const bcrypt = require('bcrypt')
+const awsUrl = require("../aws/awsUrl")
 
 
 
-aws.config.update(
-    {
-      accessKeyId: "AKIAY3L35MCRVFM24Q7U",
-      secretAccessKey: "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",
-      region: "ap-south-1"
-    }
-  )
+// aws.config.update(
+//     {
+//       accessKeyId: "AKIAY3L35MCRVFM24Q7U",
+//       secretAccessKey: "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",
+//       region: "ap-south-1"
+//     }
+//   )
   
   
-  let uploadFile = async (file) => {
-    return new Promise(async function (resolve, reject) {
-     // Promise.reject(reason) Returns a new Promise object that is rejected with the given reason.
-     // Promise.resolve(value) Returns a new Promise object that is resolved with the given value.
-      let s3 = new aws.S3({ apiVersion: "2006-03-01" }) //we will be using s3 service of aws
+//   let uploadFile = async (file) => {
+//     return new Promise(async function (resolve, reject) {
+//      // Promise.reject(reason) Returns a new Promise object that is rejected with the given reason.
+//      // Promise.resolve(value) Returns a new Promise object that is resolved with the given value.
+//       let s3 = new aws.S3({ apiVersion: "2006-03-01" }) //we will be using s3 service of aws
       
-      var uploadParams = {
-        ACL: "public-read",
-        Bucket: "classroom-training-bucket", 
-        Key: "radhika/" + file.originalname, 
-        Body: file.buffer
-      }
+//       var uploadParams = {
+//         ACL: "public-read",
+//         Bucket: "classroom-training-bucket", 
+//         Key: "radhika/" + file.originalname, 
+//         Body: file.buffer 
+//       }
   
-      s3.upload(uploadParams, function (err, data) {
-        if (err) {
-          return reject({ "error": err })
-        }
+//       s3.upload(uploadParams, function (err, data) {
+//         if (err) {
+//           return reject({ "error": err })
+//         }
   
-        console.log(data)
-        console.log(" file uploaded succesfully ")
-        return resolve(data.Location) // HERE
-      })
+//         console.log(data)
+//         console.log(" file uploaded succesfully ")
+//         return resolve(data.Location) // HERE
+//       })
       
-    })
-  }
+//     })
+//   }
   
   
 
@@ -74,7 +75,7 @@ const registerUser = async function (req, res) {
 
       let isName = /^[A-Za-z ]*$/;
 
-      if (!validator.isValid(fname)) {
+      if (!validator.isValid(fname)) {   
         return res.status(400).send({ status: false, message: "please enter name" });
       }
       if (!isName.test(fname)) {
@@ -163,7 +164,7 @@ const registerUser = async function (req, res) {
           .status(400)
           .send({ status: false, message: "address is not present ,enter valid address" });
       }
-      console.log(address)
+      //console.log(address)
       //const {shipping}= address;
      // const billing = address.billing
 
@@ -184,7 +185,7 @@ const registerUser = async function (req, res) {
           .status(422)
           .send({
             status: false,
-            message: `${address.shipping.pincode}enter valid shipping picode of 6 digit and which do not start with 0`,
+            message: `${address.shipping.pincode} enter valid shipping picode of 6 digit and which do not start with 0`,
           });
       }
 
@@ -229,11 +230,11 @@ const registerUser = async function (req, res) {
     let files = req.files // file is the array
     if (files && files.length > 0) {
 
-      uploadedFileURL = await uploadFile(files[0])
+      uploadedFileURL = await awsUrl.uploadFile(files[0])
 
     }
     else {
-      return res.status(400).send({ msg: "No file found in request" })
+      return res.status(400).send({ msg: "No file found in request for profileImage" })
     }
     requestBody.profileImage = uploadedFileURL;
     requestBody.address = address
@@ -297,7 +298,7 @@ const loginUser = async function (req, res) {
          
     }
 
-    console.log(isValidPassword)
+   // console.log(isValidPassword)
     
     if (!isValidPassword)
       return res.status(404).send({
@@ -356,9 +357,6 @@ const getUser = async function (req, res) {
         return res.status(500).send({ status: false, msg: err.message })
     }
 }
-
-module.exports.getUser = getUser
-
 
 
 
@@ -517,21 +515,6 @@ const updateUser = async function(req,res){
     }
 
 
-   // address =JSON.parse(JSON.stringify(req.body.address))
-
-    // console.log(address, typeof address)
-    // if(!(typeof address == Object)){
-      //   address = JSON.parse(req.body.address)
-    // }
-   // console.log(address, typeof address)
-
-    //if(!address) address = JSON.parse(req.body.address)
-
-    // if(! validator.isValidBody(address)){
-    //     return res.status(400).send({status:false, message:"invalid address or address is not in proper format"})
-    // }
-
-
     if(address){
         console.log(address)
         
@@ -547,13 +530,7 @@ const updateUser = async function(req,res){
         console.log(address, typeof address)
 
         if(address.shipping){
-            
-            // if (address.shipping.street="") {
-            //     return res
-            //       .status(400)
-            //       .send({ status: false, message: "enter valid shipping street address" });
-            //   }
-            //   console.log(address.shipping.street, typeof address.shipping.street)
+            ole.log(address.shipping.street, typeof address.shipping.street)
 
             if(address.shipping.street){
 
@@ -566,11 +543,6 @@ const updateUser = async function(req,res){
 
             }
 
-            // if (address.shipping.pincode="") {
-            //     return res
-            //       .status(400)
-            //       .send({ status: false, message: "enter valid shipping pincode address" });
-            //   }
 
             
             if(address.shipping.pincode){
@@ -595,12 +567,6 @@ const updateUser = async function(req,res){
             }
 
 
-            // if (address.shipping.city="") {
-            //     return res
-            //       .status(400)
-            //       .send({ status: false, message: "enter valid shipping city address" });
-            //   }
-
             if(address.shipping.city){
 
                 if (!validator.isValid(address.shipping.city)) {
@@ -618,11 +584,7 @@ const updateUser = async function(req,res){
 
         if(address.billing){
 
-            // if (address.billing.street="") {
-            //     return res
-            //       .status(400)
-            //       .send({ status: false, message: "enter valid billing street address" });
-            //   }
+           
             if(address.billing.street){
 
                 if (!validator.isValid(address.billing.street)) {
@@ -636,11 +598,6 @@ const updateUser = async function(req,res){
             }
 
 
-            // if (address.billing.pincode="") {
-            //     return res
-            //       .status(400)
-            //       .send({ status: false, message: "enter valid billing pincode address" });
-            //   }
             if(address.billing.pincode){
 
                 if (!validator.isValid(address.billing.pincode)) {
@@ -662,11 +619,7 @@ const updateUser = async function(req,res){
                 updateAddress.billing.pincode  = address.billing.pincode
             }
 
-            // if (address.billing.city="") {
-            //     return res
-            //       .status(400)
-            //       .send({ status: false, message: "enter valid billing city address" });
-            //   }
+            
             if(address.billing.city){
 
                 if (!validator.isValid(address.billing.city)) {
@@ -733,6 +686,7 @@ const updateUser = async function(req,res){
 
 
 
+module.exports.getUser = getUser
 module.exports.loginUser = loginUser;
 module.exports.registerUser = registerUser;
 module.exports.updateUser = updateUser;

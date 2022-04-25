@@ -7,7 +7,7 @@ const cartSchema = new mongoose.Schema({
         required : true,
         unique : true
     },
-    items : [{
+    items : [ {
         _id:0,
         productId : {
             type:ObjectId,
@@ -21,7 +21,7 @@ const cartSchema = new mongoose.Schema({
             default: 1
 
         }
-    }],
+    }  ],
     totalPrice : {
         type : Number,
         required : true,

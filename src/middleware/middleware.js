@@ -37,16 +37,7 @@ const authentication = async function (req, res, next) {
           .send({ status: false, msg: `user with this ID: ${userId} is not found` });
       }
 
-
-
-
-
-
-
-
-
-    let token = bearerToken.split(" ")[1]
-   
+    let token = bearerToken.split(" ")[1]    
 
     jwt.verify(token, secretkey, function (error, decode) {
       if (error) {
@@ -81,6 +72,7 @@ const authorization = async function (req, res, next) {
         .status(404)
         .send({ status: false, message: "Please pass token" });
     }
+    
     let token = bearerToken.split(" ")[1]
    
 
@@ -114,7 +106,7 @@ const authorization = async function (req, res, next) {
               .send({ status: false, msg: `user with this ID: ${userId} is not found` });
           }
   
-           console.log(userPresent._id, decodedToken.userId, "2");
+          // console.log(userPresent._id, decodedToken.userId, "2");
           if (userId != decodedToken.userId) {
             return res
               .status(403)

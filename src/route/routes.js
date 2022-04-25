@@ -8,9 +8,9 @@ const auth = require("../middleware/middleware")
 
 
 
-router.get('test-me', function(req,res){
-    res.send("hello from get api")
-})
+// router.get('test-me', function(req,res){
+//     res.send("hello from get api")
+// })
 
 
 
